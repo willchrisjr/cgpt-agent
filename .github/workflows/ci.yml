@@ -1,0 +1,65 @@
+name: CI - ticket-bridge
+
+on:
+  push:
+    branches: [ "**" ]
+    paths:
+      - 'it-portfolio/ticket-bridge/**'
+      - 'tests/**'
+      - '.github/workflows/ci-ticket-bridge.yml'
+  pull_request:
+    paths:
+      - 'it-portfolio/ticket-bridge/**'
+      - 'tests/**'
+      - '.github/workflows/ci-ticket-bridge.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      - name: Run tests
+        run: pytest -q
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        working-directory: it-portfolio/ticket-bridge
+        run: docker build -t ticket-bridge:ci .
+      - name: Run container
+        run: docker run -d --rm -p 8080:8080 --name ticket-bridge-ci ticket-bridge:ci
+      - name: Wait for health
+        run: |
+          for i in {1..30}; do
+            if curl -fsS http://localhost:8080/healthz > /dev/null; then
+              echo "healthy"; exit 0; fi; sleep 1; done
+          echo "service not healthy"; docker logs ticket-bridge-ci; exit 1
+      - name: Stop container
+        if: always()
+        run: docker stop ticket-bridge-ci
+      - name: Push to GHCR (tags only)
+        if: startsWith(github.ref, 'refs/tags/ticket-bridge-v')
+        uses: docker/build-push-action@v6
+        with:
+          context: it-portfolio/ticket-bridge
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/ticket-bridge:${{ github.ref_name }}
+          provenance: false

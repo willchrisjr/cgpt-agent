@@ -1,5 +1,6 @@
 # Sample configuration for ticket-bridge
-# Copy to config.yml and set TICKET_BRIDGE_CONFIG=config.yml
+# Optional: token required in header X-Bridge-Token for /webhook requests
+# bridge_token: "change-me"
 secret_token: "replace-me"
 runbook_executor_url: "http://localhost:5001/run"
 timeouts:
