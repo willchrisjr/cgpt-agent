@@ -1,0 +1,9 @@
+name: Compromised user response
+version: 1
+actions:
+  - name: disable_user
+    with:
+      user_id: user-123
+  - name: reset_password
+    with:
+      user_id: user-123
