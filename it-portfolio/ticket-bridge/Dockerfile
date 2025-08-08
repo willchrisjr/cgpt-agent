@@ -19,9 +19,8 @@ WORKDIR /app
 COPY --from=builder /wheels /wheels
 RUN pip install --no-cache-dir /wheels/*
 
-# Copy application code
-COPY it-portfolio/ticket-bridge/ /app/
-COPY requirements.txt /app/
+# Copy application code (build context is it-portfolio/ticket-bridge)
+COPY . /app/
 
 USER app
 EXPOSE 8080
