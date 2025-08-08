@@ -1,1 +1,10 @@
 artifacts/
+.venv/
+__pycache__/
+*.pyc
+.dist/
+dist/
+build/
+.coverage
+coverage.xml
+.pytest_cache/
