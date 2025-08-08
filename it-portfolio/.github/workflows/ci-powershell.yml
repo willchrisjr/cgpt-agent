@@ -1,0 +1,22 @@
+name: CI - PowerShell
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  orchestrator-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module -Name Pester -Scope CurrentUser -Force -SkipPublisherCheck
+      - name: Run Pester
+        shell: pwsh
+        working-directory: orchestrator/tests
+        run: |
+          Invoke-Pester -CI

@@ -1,0 +1,7 @@
+# Sample configuration for ticket-bridge
+# Copy to config.yml and set TICKET_BRIDGE_CONFIG=config.yml
+secret_token: "replace-me"
+runbook_executor_url: "http://localhost:5001/run"
+timeouts:
+  request_seconds: 10
+  connect_seconds: 5
