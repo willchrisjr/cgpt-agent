@@ -7,7 +7,10 @@ import yaml
 def load_yaml(path: Path | str) -> Dict[str, Any]:
     path_obj = Path(path)
     with path_obj.open("r", encoding="utf-8") as f:
-        return yaml.safe_load(f) or {}
+        loaded: Any = yaml.safe_load(f)
+        if isinstance(loaded, dict):
+            return loaded
+        return {}
 
 
 def run_actions(actions: Iterable[Dict[str, Any]]) -> List[str]:

@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "it-runbook-executor"
+version = "0.1.0"
+description = "Execute declarative YAML runbooks with pluggable actions"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "IT", email = "devnull@example.com" }]
+license = { text = "MIT" }
+keywords = ["runbook", "automation", "cli"]
+dependencies = [
+  "PyYAML>=6.0.1",
+  "requests>=2.32.0",
+]
+
+[project.scripts]
+it-runbook = "runbook:main"
+
+[tool.setuptools]
+py-modules = ["runbook"]
+
+[tool.setuptools.packages.find]
+include = ["actions"]
+exclude = ["tests*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "I", "UP", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+known-first-party = ["actions", "runbook"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_configs = true
+no_implicit_optional = true
+check_untyped_defs = true
+disable_error_code = ["import-untyped"]
+
+# Default: not strict everywhere
+strict = false
+
+# Enable strict mode for specific modules
+[tool.mypy."actions.*"]
+strict = true
+
+[tool.mypy.runbook]
+strict = true
